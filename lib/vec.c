@@ -79,9 +79,9 @@ void* vec_with_capacity(size_t capacity, size_t stride)
 
 void vec_del(vec_t vec)
 {
-    assert(vec);
-
-    free(get_ptr_to_header(vec));
+    if (vec) {
+        free(get_ptr_to_header(vec));
+    }
 }
 
 void vec_zero(vec_t vec) 

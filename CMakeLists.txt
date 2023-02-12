@@ -8,7 +8,8 @@ project(
 INCLUDE_DIRECTORIES(lib)
 
 set(LIB_SOURCES lib/vec.c
-                lib/ezfile.c)
+                lib/ezfile.c
+                lib/csv.c)
 
 add_executable(testmain app/testmain/main.c ${LIB_SOURCES})
 target_link_libraries(testmain)

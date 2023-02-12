@@ -1,21 +1,16 @@
-#include "vec.h"
 #include "stdio.h"
 #include "assert.h"
 
+#include "ezc.h"
+
 int main() {
-    int* integers = vec_with_capacity(20, sizeof *integers);
+    const char* file = "/home/brandon/projects/ezc/trash.txt";
+    ezfile_write(file, "Testing 1234");
+    ezfile_append(file, "\r\nahhhhhhhhh");
 
-    for (int i = 0; i < 11; i++){
-        vec_push((void**)&integers, &i);
-    }
+    char* data = ezfile_read(file);
+    printf("%s\n", data);
 
-    vec_reset(integers);
-
-    for (int i = 0; i < vec_len(integers); i++){
-        printf("%d, ", integers[i]);
-    }
-    printf("\n");
-
-    vec_del(integers);
+    ezfile_delete(file);
     return 0;
 }

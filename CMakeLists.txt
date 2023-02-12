@@ -8,6 +8,7 @@ project(
 INCLUDE_DIRECTORIES(lib)
 
 set(SOURCES lib/vec.c
+            lib/ezfile.c
             main/main.c)
 
 add_executable(testmain  ${SOURCES})

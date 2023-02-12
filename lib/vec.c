@@ -142,6 +142,12 @@ size_t vec_len(vec_t vec)
     return header->len;
 }
 
+void vec_set_len(vec_t vec, size_t new_len)
+{
+    struct vec* header = get_ptr_to_header(vec);
+    header->len = new_len;
+}
+
 void vec_grow_size(vec_t* vec) 
 {
     assert(try_vec_grow_size(vec));

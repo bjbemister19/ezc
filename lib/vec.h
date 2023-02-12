@@ -4,10 +4,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "eztypes.h"
+
 #define VEC_GROWTH_FACTOR 2
 #define VEC_DEFAULT_CAPACITY 1024
-
-typedef void* vec_t;
 
 /**
  * @brief Create a new vector with default capacity
@@ -102,6 +102,14 @@ size_t vec_capacity(vec_t vec);
  * @return The length
  */
 size_t vec_len(vec_t vec);
+
+/**
+ * @brief Set the length of the vector, useful if items are added manually
+ * 
+ * @param vec The vector whos length to set
+ * @param new_len The new length of the vector
+ */
+void vec_set_len(vec_t vec, size_t new_len);
 
 /**
  * @brief Grow the size of the vector 

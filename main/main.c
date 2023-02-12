@@ -3,19 +3,18 @@
 #include "assert.h"
 
 int main() {
-    int* integers = vec_new(sizeof *integers);
+    int* integers = vec_with_capacity(20, sizeof *integers);
 
     for (int i = 0; i < 11; i++){
         vec_push((void**)&integers, &i);
     }
 
-    for(int i = 0; i < 11; i++){
-        for (int i = 0; i < vec_len(integers); i++){
-            printf("%d, ", integers[i]);
-        }
-        printf("\n");
-        vec_pop(integers, NULL);
+    vec_reset(integers);
+
+    for (int i = 0; i < vec_len(integers); i++){
+        printf("%d, ", integers[i]);
     }
+    printf("\n");
 
     vec_del(integers);
     return 0;

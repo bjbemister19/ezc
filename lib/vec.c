@@ -79,7 +79,52 @@ void* vec_with_capacity(size_t capacity, size_t stride)
 
 void vec_del(vec_t vec)
 {
+    assert(vec);
+
     free(get_ptr_to_header(vec));
+}
+
+void vec_zero(vec_t vec) 
+{
+    assert(vec);
+    
+    struct vec* header = get_ptr_to_header(vec);
+    memset(vec, 0, header->capacity * header->stride);
+    header->len = header->capacity;
+}
+
+void vec_zero_rest(vec_t vec) 
+{
+    assert(vec);
+
+    struct vec* header = get_ptr_to_header(vec);
+    void* index = get_ptr_to_index(vec, header->len);
+    memset(index, 0, (header->capacity - header->len) * header->stride);
+    header->len = header->capacity;
+}
+
+
+void vec_fill(vec_t vec, void* item) 
+{
+    assert(vec);
+    assert(item);
+
+    struct vec* header = get_ptr_to_header(vec);
+    header->len = 0;
+    for (int i = 0; i < header->capacity; i++){
+        vec_push_to_capacity(vec, item);
+    }
+}
+
+void vec_fill_rest(vec_t vec, void* item)
+{
+    assert(vec);
+    assert(item);
+
+    struct vec* header = get_ptr_to_header(vec);
+    for (int i = header->len; i < header->capacity; i++){
+        vec_push_to_capacity(vec, item);
+    }
 }
 
 size_t vec_capacity(vec_t vec)
@@ -175,4 +220,12 @@ bool try_vec_pop(vec_t vec, void* item)
     if(is_empty(vec)) return false;
     vec_pop_internal(vec, item);
     return true;
+}
+
+void vec_reset(vec_t vec)
+{
+    assert(vec);
+
+    struct vec* header = get_ptr_to_header(vec);
+    header->len = 0;
 }

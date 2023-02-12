@@ -46,6 +46,44 @@ vec_t vec_with_capacity(size_t capacity, size_t stride);
 void vec_del(vec_t vec);
 
 /**
+ * @brief Set contents of vector to zero, set len to max
+ * 
+ * @note Overwrites any values currently in vector
+ * 
+ * @param vec The vector to be zeroed 
+ */
+void vec_zero(vec_t vec);
+
+/**
+ * @brief Set contents of vector to zero, set len to max
+ * 
+ * @note Keeps items currently in buffer
+ * 
+ * @param vec The vector to be zeroed 
+ */
+void vec_zero_rest(vec_t vec);
+
+/**
+ * @brief Fill vector with specified value
+ * 
+ * @note Overwrites any values currently in vector
+ * 
+ * @param vec The vector to be filled
+ * @param item The item to fill vector with
+ */
+void vec_fill(vec_t vec, void* item);
+
+/**
+ * @brief Fill vector with specified value
+ * 
+ * @note Keeps items currently in vector, fills in the rest
+ * 
+ * @param vec The vector to be filled
+ * @param item The item to fill vector with
+ */
+void vec_fill_rest(vec_t vec, void* item);
+
+/**
  * @brief Get the capacity of the vector
  * 
  * @note Capacity is how many items the vector is able to store 
@@ -130,5 +168,11 @@ void vec_pop(vec_t vec, void* item);
  * @return false if pop failed
  */
 bool try_vec_pop(vec_t vec, void* item);
+
+/**
+ * @brief Remove all items from vector 
+ * @param vec Vector to be reset
+ */
+void vec_reset(vec_t vec);
 
 #endif // VEC_C

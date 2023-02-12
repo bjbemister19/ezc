@@ -21,7 +21,7 @@ static void* get_ptr_to_vec(void* buffer)
     return buffer + sizeof (struct vec);
 }
 
-static bool has_capacity(void* vec)
+static bool has_capacity(vec_t vec)
 {
     struct vec* header = get_ptr_to_header(vec);
     if (header->len >= header->capacity)
@@ -29,21 +29,43 @@ static bool has_capacity(void* vec)
     return true;
 }
 
-static void* get_ptr_to_index(void* vec, size_t index) 
+static bool is_empty(vec_t vec) 
+{
+    struct vec* header = get_ptr_to_header(vec);
+    if(header->len == 0)
+        return true;
+    return false;
+}
+
+static void* get_ptr_to_index(vec_t vec, size_t index) 
 {
     struct vec* header = get_ptr_to_header(vec);
     return vec + (index * header->stride);
 }
 
-static void vec_push_internal(void* vec, void* item)
+static void vec_push_internal(vec_t vec, void* item)
 {
     struct vec* header = get_ptr_to_header(vec);
     void* index = get_ptr_to_index(vec, header->len);
     memcpy(index, item, header->stride);
     header->len++;
 }
+    
+static void vec_pop_internal(vec_t vec, void* item)
+{
+    struct vec* header = get_ptr_to_header(vec);
+    void* index = get_ptr_to_index(vec, header->len-1);
+    if(item)
+        memcpy(item, index, header->stride);
+    header->len--;
+}
 
-void* vec_new(size_t capacity, size_t stride)
+void* vec_new(size_t stride)
+{
+    return vec_with_capacity(VEC_DEFAULT_CAPACITY, stride);
+}
+
+void* vec_with_capacity(size_t capacity, size_t stride)
 {
     void* buffer = malloc((capacity * stride) + sizeof (struct vec));
     struct vec* header = buffer;
@@ -55,23 +77,30 @@ void* vec_new(size_t capacity, size_t stride)
     return get_ptr_to_vec(buffer);
 }
 
-void vec_del(void* vec)
+void vec_del(vec_t vec)
 {
     free(get_ptr_to_header(vec));
 }
 
-size_t vec_capacity(void* vec)
+size_t vec_capacity(vec_t vec)
 {
+    assert(vec);
+
     struct vec* header = get_ptr_to_header(vec);
     return header->capacity;
 }
-size_t vec_len(void* vec)
+size_t vec_len(vec_t vec)
 {
+    assert(vec);
+
     struct vec* header = get_ptr_to_header(vec);
     return header->len;
 }
 
-bool vec_grow_size(void** vec) {
+bool vec_grow_size(vec_t* vec) {
+    assert(vec);
+    assert(*vec);
+
     struct vec* header = get_ptr_to_header(*vec);
     void* new = realloc(header, ((header->capacity * VEC_GROWTH_FACTOR) * header->stride) + sizeof (struct vec));
     if (!new) return false;
@@ -81,16 +110,24 @@ bool vec_grow_size(void** vec) {
     return true;
 }
 
-void vec_push(void** vec, void* item)
+void vec_push(vec_t* vec, void* item)
 {
+    assert(vec);
+    assert(*vec);
+    assert(item);
+
     if(!has_capacity(vec)){
         assert(vec_grow_size(vec));
     }
     vec_push_internal(*vec, item);    
 }
 
-bool try_vec_push(void** vec, void* item)
+bool try_vec_push(vec_t* vec, void* item)
 {
+    assert(vec);
+    assert(*vec);
+    assert(item);
+
     if(!has_capacity(vec)){
         bool success = vec_grow_size(vec);
         if(!success) return false;
@@ -99,15 +136,38 @@ bool try_vec_push(void** vec, void* item)
     return true;
 }
 
-void vec_push_to_capacity(void* vec, void* item)
+void vec_push_to_capacity(vec_t vec, void* item)
 {
+    assert(vec);
+    assert(item);
+
     assert(has_capacity(vec));
     vec_push_internal(vec, item);    
 }
 
-bool try_vec_push_to_capacity(void* vec, void* item)
+bool try_vec_push_to_capacity(vec_t vec, void* item)
 {
+    assert(vec);
+    assert(item);
+
     if(!has_capacity(vec)) return false;
     vec_push_internal(vec, item);
+    return true;
+}
+
+void vec_pop(vec_t vec, void* item)
+{
+    assert(vec);
+
+    assert(!is_empty(vec));
+    vec_pop_internal(vec, item);
+}
+
+bool try_vec_pop(vec_t vec, void* item)
+{
+    assert(vec);
+
+    if(is_empty(vec)) return false;
+    vec_pop_internal(vec, item);
     return true;
 }

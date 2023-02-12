@@ -97,7 +97,12 @@ size_t vec_len(vec_t vec)
     return header->len;
 }
 
-bool vec_grow_size(vec_t* vec) {
+void vec_grow_size(vec_t* vec) 
+{
+    assert(try_vec_grow_size(vec));
+}
+
+bool try_vec_grow_size(vec_t* vec) {
     assert(vec);
     assert(*vec);
 
@@ -117,7 +122,7 @@ void vec_push(vec_t* vec, void* item)
     assert(item);
 
     if(!has_capacity(vec)){
-        assert(vec_grow_size(vec));
+        vec_grow_size(vec);
     }
     vec_push_internal(*vec, item);    
 }
@@ -129,7 +134,7 @@ bool try_vec_push(vec_t* vec, void* item)
     assert(item);
 
     if(!has_capacity(vec)){
-        bool success = vec_grow_size(vec);
+        bool success = try_vec_grow_size(vec);
         if(!success) return false;
     }
     vec_push_internal(*vec, item);  
